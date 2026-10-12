@@ -145,16 +145,30 @@
       const { data, error } = await supabase.rpc('guest_get_plan', { p_token: token });
       if (error || !data) throw new Error('not found');
       
-      const plan = Array.isArray(data) ? data[0] : data;
+      // RPC returns { plan: {...}, venue: {...}, rsvp_counts: {...}, plan_date, reply_deadline_note }
+      const plan = data.plan || {};
+      const venue = data.venue || {};
+      
+      const hostName = plan.name_on_reservation || 'Someone';
       document.getElementById('headline').textContent = 
-        `${plan.host_name || 'Someone'} invited you to dinner`;
+        `${hostName} invited you to dinner`;
       document.getElementById('inviter').textContent = 
-        `${plan.host_name || 'Your host'} started a Standing with you — dinner on repeat, no planning needed.`;
-      document.getElementById('venue').textContent = plan.venue_name || 'TBD';
-      document.getElementById('when').textContent = 
-        `${plan.plan_date ? new Date(plan.plan_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : ''} · ${plan.plan_time || ''}`;
+        `${hostName} started a Standing with you — dinner on repeat, no planning needed.`;
+      document.getElementById('venue').textContent = venue.name || 'TBD';
+      
+      const planDate = plan.plan_date || data.plan_date;
+      let whenText = '';
+      if (planDate) {
+        const d = new Date(planDate);
+        whenText = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        whenText += ' · ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      }
+      document.getElementById('when').textContent = whenText;
+      
+      const partySize = plan.party_size ? `${plan.party_size} people` : '';
+      const neighborhood = venue.neighborhood || '';
       document.getElementById('who').textContent = 
-        `${plan.party_size || ''} people · ${plan.venue_neighborhood || ''}`;
+        [partySize, neighborhood].filter(Boolean).join(' · ');
       
       show('invite');
     } catch (e) {
@@ -169,9 +183,28 @@
     document.getElementById(id).classList.remove('hidden');
   }
   
+  function normalizePhone(input) {
+    // Strip all non-digits, then ensure E.164 format
+    let digits = input.replace(/\D/g, '');
+    if (digits.length === 10) {
+      // US number without country code
+      return '+1' + digits;
+    } else if (digits.length === 11 && digits[0] === '1') {
+      // US number with country code
+      return '+' + digits;
+    } else if (input.trim().startsWith('+')) {
+      // Already has +, just clean it
+      return '+' + digits;
+    }
+    // Invalid - return as-is to trigger validation error
+    return input.trim();
+  }
+  
   function getPhone() {
-    const phone = document.getElementById('phone').value.replace(/\D/g, '');
-    if (phone.length < 10) {
+    const raw = document.getElementById('phone').value;
+    const phone = normalizePhone(raw);
+    // E.164: + followed by 7-15 digits
+    if (!/^\+\d{7,15}$/.test(phone)) {
       document.getElementById('phoneError').textContent = 'Enter a valid phone number';
       document.getElementById('phoneError').classList.remove('hidden');
       return null;
@@ -212,3 +245,8 @@
   
   document.getElementById('btnIn').onclick = () => rsvp('in');
   document.getElementById('btnOut').onclick = () => rsvp('out');
+  
+  init();
+</script>
+</body>
+</html>
