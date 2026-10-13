@@ -131,13 +131,20 @@
   const SUPABASE_URL = 'https://yoeowmvyvjcerqlayxzb.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvZW93bXZ5dmpjZXJxbGF5eHpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2Njk2MTUsImV4cCI6MjEwNzI0NTYxNX0.xzjV6CahsZ6xUuimZgT0UOyUM2Rx0zlNa5uzr6MGfqw';
   
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  let supabase = null;
+  try {
+    if (window.supabase) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    }
+  } catch (e) {
+    // Supabase client failed to load — will show error in init()
+  }
   
   const params = new URLSearchParams(window.location.search);
   const token = params.get('t');
   
   async function init() {
-    if (!token) {
+    if (!token || !supabase) {
       show('error');
       return;
     }
