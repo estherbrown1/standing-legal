@@ -142,14 +142,26 @@
   
   const params = new URLSearchParams(window.location.search);
   const token = params.get('t');
-  
+
+  // A Supabase RPC that never resolves would hang the page on "Loading..."
+  // forever (try/catch only handles thrown errors, not hangs). Race every
+  // RPC against a 10s timeout so the page always reaches a terminal state.
+  const RPC_TIMEOUT_MS = 10000;
+  function withTimeout(promise, ms = RPC_TIMEOUT_MS) {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('request timed out')), ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
   async function init() {
     if (!token || !supabase) {
       show('error');
       return;
     }
     try {
-      const { data, error } = await supabase.rpc('guest_get_plan', { p_token: token });
+      const { data, error } = await withTimeout(supabase.rpc('guest_get_plan', { p_token: token }));
       if (error || !data) throw new Error('not found');
       
       // RPC returns { plan: {...}, venue: {...}, rsvp_counts: {...}, plan_date, reply_deadline_note }
@@ -228,11 +240,11 @@
     document.getElementById('btnOut').disabled = true;
     
     try {
-      const { error } = await supabase.rpc('guest_rsvp', {
+      const { error } = await withTimeout(supabase.rpc('guest_rsvp', {
         p_token: token,
         p_phone: phone,
         p_reply: reply,
-      });
+      }));
       if (error) throw error;
       
       document.getElementById('doneTitle').textContent = 
