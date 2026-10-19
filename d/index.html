@@ -3,269 +3,687 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Standing — You're invited</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Standing — you're invited</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #fff;
-    color: #1a1a1a;
-    padding: 24px 20px;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  .wordmark {
-    font-family: Georgia, serif;
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 24px;
-  }
-  .wordmark span { color: #E85D04; }
-  h1 {
-    font-family: Georgia, serif;
-    font-size: 32px;
-    line-height: 1.2;
-    margin-bottom: 12px;
-  }
-  .sub { color: #666; font-size: 16px; margin-bottom: 24px; line-height: 1.5; }
-  .card {
-    border: 1px solid #e0e0e0;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 24px;
-  }
-  .venue { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-  .when { font-size: 16px; margin-bottom: 4px; }
-  .who { color: #666; font-size: 14px; }
-  label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #333;
-  }
-  input {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    margin-bottom: 16px;
-  }
-  .btn {
-    width: 100%;
-    padding: 16px;
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    border-radius: 14px;
-    margin-bottom: 12px;
-    cursor: pointer;
-  }
-  .btn-in { background: #E85D04; color: #fff; }
-  .btn-out {
-    background: #fff;
-    color: #1a1a1a;
-    border: 1px solid #ddd;
-  }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .error { color: #d32f2f; font-size: 14px; margin-bottom: 12px; }
-  .success {
-    text-align: center;
-    padding: 40px 20px;
-  }
-  .success h2 {
-    font-family: Georgia, serif;
-    font-size: 28px;
-    margin-bottom: 12px;
-  }
-  .hidden { display: none; }
+  :root { --accent: #E8590C; --ink: #1a1a1a; --faint: #6b6b6b; --line: #ececec; --card: #fafafa; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: var(--ink); margin: 0; padding: 0 20px 64px; }
+  .wrap { max-width: 460px; margin: 0 auto; }
+  .brand { font-weight: 800; letter-spacing: -0.02em; font-size: 20px; margin: 28px 0 6px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 400;
+       font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; margin: 8px 0 4px; }
+  .who { color: var(--faint); font-size: 15px; margin: 0 0 2px; }
+  .when { font-size: 17px; font-weight: 600; margin: 6px 0 18px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+          padding: 16px; margin: 12px 0; }
+  .venue-name { font-size: 19px; font-weight: 700; margin: 0 0 2px; }
+  .venue-meta { color: var(--faint); font-size: 14px; margin: 2px 0; }
+  .linkrow { margin-top: 10px; }
+  .linkrow a { color: var(--accent); font-weight: 600; font-size: 15px; margin-right: 18px; text-decoration: none; }
+  .card-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em;
+                color: var(--faint); font-weight: 700; margin: 0 0 8px; }
+  .rsvp-line { font-size: 15px; margin: 4px 0; }
+  .faint { color: var(--faint); font-size: 14px; }
+  .deadline { font-size: 14px; color: var(--faint); margin: 14px 0; }
+  label { display: block; font-size: 14px; font-weight: 600; margin: 18px 0 6px; }
+  .hint { font-size: 13px; color: var(--faint); margin: 4px 0 0; }
+  input[type="tel"], input[type="text"] { width: 100%; font-size: 17px; padding: 13px 14px;
+      border: 1.5px solid var(--line); border-radius: 12px; }
+  input:focus { outline: none; border-color: var(--accent); }
+  .error { color: #c92a2a; font-size: 14px; margin: 6px 0 0; }
+  .btn { display: block; width: 100%; font-size: 17px; font-weight: 700; text-align: center;
+         padding: 15px; border-radius: 14px; border: none; cursor: pointer; margin-top: 12px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
+  .btn:disabled { opacity: 0.55; cursor: default; }
+  .chiprow { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+  .chip { flex: 1; padding: 12px 8px; font-size: 15px; font-weight: 600; text-align: center;
+          background: #fff; color: var(--ink); border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; }
+  .chip.selected { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip:disabled { opacity: 0.55; cursor: default; }
+  .yourein { background: #eef9ee; border: 1px solid #cfe8cf; border-radius: 14px;
+             padding: 16px; font-size: 16px; font-weight: 600; margin: 18px 0 4px; }
+  .note { background: #fff8f0; border: 1px solid #f3e2cd; border-radius: 12px;
+          padding: 12px 14px; font-size: 14px; margin: 12px 0; }
+  .hidden { display: none !important; }
+  .center { text-align: center; color: var(--faint); margin-top: 60px; }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--line);
+             border-top-color: var(--accent); border-radius: 50%;
+             animation: spin 0.8s linear infinite; margin: 60px auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
-<div class="wordmark">Stand<span>ing</span></div>
-
-<div id="loading">
-  <p class="sub">Loading your invite…</p>
-</div>
-
-<div id="invite" class="hidden">
-  <h1 id="headline">You're invited</h1>
-  <p class="sub" id="inviter"></p>
-  
-  <div class="card">
-    <div class="venue" id="venue"></div>
-    <div class="when" id="when"></div>
-    <div class="who" id="who"></div>
+<div class="wrap">
+  <div id="loading"><div class="spinner"></div><p class="center">Loading your invite…</p></div>
+  <div id="invalid" class="hidden">
+    <p class="brand">Standing</p>
+    <h1>This invite link isn't valid.</h1>
+    <p class="faint">Ask your host to send you a fresh one.</p>
   </div>
+  <div id="neterror" class="hidden">
+    <p class="brand">Standing</p>
+    <h1>Couldn't load this invite.</h1>
+    <p class="faint">Check your connection and try again — the invite itself may be fine.</p>
+    <button class="btn btn-primary" id="btnRetry">Try again</button>
+  </div>
+  <div id="page" class="hidden">
+    <p class="brand">Standing</p>
+    <h1 id="title">started a Standing with you</h1>
+    <p class="who" id="who"></p>
+    <p class="when" id="when"></p>
 
-  <label for="phone">Your phone number</label>
-  <input
-    type="tel"
-    id="phone"
-    placeholder="(555) 123-4567"
-    autocomplete="tel"
-  >
-  <div class="error hidden" id="phoneError"></div>
+    <div class="card" id="venueCard">
+      <p class="venue-name" id="venueName"></p>
+      <p class="venue-meta" id="venueMeta"></p>
+      <p class="venue-meta" id="venuePrice"></p>
+      <div class="linkrow" id="venueLinks"></div>
+    </div>
 
-  <button class="btn btn-in" id="btnIn">I'm in ✓</button>
-  <button class="btn btn-out" id="btnOut">Can't make it</button>
-  
-  <p class="sub" style="margin-top: 16px; font-size: 14px;">
-    No app needed. We'll text you a reminder the day before.
-  </p>
-</div>
+    <div class="card">
+      <p class="card-title">Who's in</p>
+      <p class="rsvp-line" id="countsLine"></p>
+      <p class="faint" id="partySize"></p>
+    </div>
 
-<div id="done" class="hidden success">
-  <h2 id="doneTitle"></h2>
-  <p class="sub" id="doneSub"></p>
-</div>
+    <p class="deadline" id="deadline"></p>
 
-<div id="error" class="hidden">
-  <h1>Link not found</h1>
-  <p class="sub">This invite link doesn't look right. Ask your host to send it again.</p>
+    <div id="planOver" class="hidden">
+      <div class="card"><p class="rsvp-line" id="planOverText"></p></div>
+    </div>
+
+    <div id="replyBox">
+      <label for="phone">Your phone number</label>
+      <input id="phone" type="tel" placeholder="+15551234567" autocomplete="tel" inputmode="tel">
+      <p class="hint">The link identifies the dinner; your number identifies you.</p>
+      <p class="faint hidden" id="existingRsvp"></p>
+      <p class="error hidden" id="phoneError"></p>
+      <div class="note">Beta: confirming your number is enough — no code is sent yet.</div>
+      <button class="btn btn-primary" id="btnIn">I'm in</button>
+      <button class="btn btn-secondary" id="btnOut">Can't make it</button>
+    </div>
+
+    <div id="afterIn" class="hidden">
+      <div class="yourein" id="youreIn">You're in ✓</div>
+      <button class="btn btn-secondary" id="btnCal">Add to calendar</button>
+      <label for="allergies">Anything we should know?</label>
+      <input id="allergies" type="text" placeholder="e.g. shellfish allergy" maxlength="500">
+      <p class="hint">Goes straight to the reservation note.</p>
+      <button class="btn btn-secondary" id="btnAllergies">Save note</button>
+    </div>
+
+    <div id="afterOut" class="hidden">
+      <div class="card"><p class="rsvp-line" style="font-weight:600">No worries — maybe next time.</p>
+      <p class="faint">Your host has been updated.</p></div>
+      <p style="margin:14px 0 4px;font-weight:600">Want to tell us why? (optional)</p>
+      <div class="chiprow">
+        <button class="chip" id="chipOnce">Just this time</button>
+        <button class="chip" id="chipWeekday">That weekday is usually bad</button>
+      </div>
+      <p class="faint hidden" id="followUpNote"></p>
+      <p class="error hidden" id="followUpError"></p>
+    </div>
+  </div>
 </div>
 
 <script>
-  const SUPABASE_URL = 'https://yoeowmvyvjcerqlayxzb.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvZW93bXZ5dmpjZXJxbGF5eHpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2Njk2MTUsImV4cCI6MjEwNzI0NTYxNX0.xzjV6CahsZ6xUuimZgT0UOyUM2Rx0zlNa5uzr6MGfqw';
-  
-  let supabase = null;
-  try {
-    if (window.supabase) {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+(function () {
+  "use strict";
+  var SUPABASE_URL = "https://yoeowmvyvjcerqlayxzb.supabase.co";
+  var ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvZW93bXZ5dmpjZXJxbGF5eHpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2Njk2MTUsImV4cCI6MjEwNzI0NTYxNX0.xzjV6CahsZ6xUuimZgT0UOyUM2Rx0zlNa5uzr6MGfqw";
+
+  function $(id) { return document.getElementById(id); }
+  function show(id) { $(id).classList.remove("hidden"); }
+  function hide(id) { $(id).classList.add("hidden"); }
+
+  // Token: ?t= (what the app generates — guestLink() uses ?t=),
+  // ?token=, #t= / #token=<redacted> last path segment (/d/<token>).
+  function getToken() {
+    // QUERY FIRST: the old code ran the /d/ path regex first, so
+    // /d/index.html?t=REALTOKEN matched "/d/index" and returned the
+    // literal token "index" — a valid link read as "unknown guest
+    // token". The canonical guestLink() (/d/?t=...) dodged this, but
+    // any link carrying index.html (e.g. copied from a browser
+    // address bar after GitHub Pages serves the file) broke.
+    var params = new URLSearchParams(location.search);
+    var q = params.get("t") || params.get("token");
+    if (q) return q;
+    // HASH: links may carry #t=<token> / #token=<token> (the app's
+    // share sheet has produced both). Parse the fragment as query
+    // params — the old single-regex capture turned "#t=abc&foo=bar"
+    // into the token "abc&foo=bar" (unknown token), and a bare
+    // "#anchor" was treated as a token.
+    if (location.hash.length > 1) {
+      var hp = new URLSearchParams(location.hash.slice(1));
+      var hq = hp.get("t") || hp.get("token");
+      if (hq) return hq;
     }
-  } catch (e) {
-    // Supabase client failed to load — will show error in init()
+    var m = location.pathname.match(/\/d\/([A-Za-z0-9_-]+)/);
+    if (m && m[1] !== "index") return m[1];
+    var seg = location.pathname.split("/").filter(Boolean).pop();
+    if (seg && seg !== "index.html" && seg !== "d" && seg !== "standing-legal") return seg;
+    return null;
   }
-  
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('t');
 
-  // A Supabase RPC that never resolves would hang the page on "Loading..."
-  // forever (try/catch only handles thrown errors, not hangs). Race every
-  // RPC against a 10s timeout so the page always reaches a terminal state.
-  const RPC_TIMEOUT_MS = 10000;
-  function withTimeout(promise, ms = RPC_TIMEOUT_MS) {
-    let timer;
-    const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error('request timed out')), ms);
+  function rpc(name, body) {
+    // TIMEOUT: the old fetch had none — a hung connection left the
+    // spinner up forever with no way out.
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 10000);
+    return fetch(SUPABASE_URL + "/rest/v1/rpc/" + name, {
+      method: "POST",
+      headers: {
+        "apikey": ANON_KEY,
+        "Authorization": "Bearer " + ANON_KEY,
+        "Content-Type": "application/json"
+      },
+      signal: ctrl.signal,
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      clearTimeout(timer);
+      return r.json().then(function (j) {
+        if (!r.ok) throw new Error((j && j.message) || ("HTTP " + r.status));
+        return j;
+      });
+    }).catch(function (e) {
+      clearTimeout(timer);
+      throw e;
     });
-    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
   }
 
-  async function init() {
-    if (!token || !supabase) {
-      show('error');
+  // Venue-local wall time: guest_get_plan returns the Standing's
+  // timezone (migration 0042). The old code rendered in the VIEWER's
+  // zone, so a 7 PM Cambridge dinner showed as 6 PM to a guest in
+  // New Orleans. Falls back to viewer-local when tz is null/invalid
+  // (pre-migration) — same shape either way.
+  function fmtDayTime(iso, tz) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (tz) {
+      try {
+        var parts = new Intl.DateTimeFormat("en-US", {
+          weekday: "long", month: "short", day: "numeric",
+          hour: "numeric", minute: "2-digit", timeZone: tz
+        }).formatToParts(d);
+        var get = function (t) { var p = parts.find(function (x) { return x.type === t; }); return p ? p.value : ""; };
+        return get("weekday") + ", " + get("month") + " " + get("day") + " · " + get("hour") + ":" + get("minute") + " " + get("dayPeriod");
+      } catch (e) { /* invalid tz — fall through to viewer-local */ }
+    }
+    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var h = d.getHours(), m = d.getMinutes();
+    var ap = h >= 12 ? "PM" : "AM"; h = h % 12; if (h === 0) h = 12;
+    var mm = m < 10 ? "0" + m : "" + m;
+    return days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + " · " + h + ":" + mm + " " + ap;
+  }
+
+  // validPhone: normalize-equivalent of the app's normalizePhone —
+  // accepts "555-123-4567", "(555) 123-4567", "+15551234567", 011/00
+  // international prefixes. Returns the E.164 number or null (never a
+  // boolean: callers must send the NORMALIZED number to the RPC, not
+  // the raw typed text). Letters / extension markers are rejected,
+  // never reinterpreted. 10-digit numbers starting 0/1 and 11-digit
+  // numbers whose 2nd digit isn't 2–9 are not NANP numbers → null.
+  function validPhone(raw) {
+    if (!raw) return null;
+    var t = String(raw).trim();
+    if (/\p{L}/u.test(t)) return null;
+    if (/[,;*#]/.test(t)) return null;
+    if (t.indexOf('+', 1) !== -1) return null;
+    var digits, cand;
+    if (t.charAt(0) === '+') {
+      digits = t.slice(1).replace(/\D/g, '');
+      cand = '+' + digits;
+      return /^\+[1-9][0-9]{7,14}$/.test(cand) ? cand : null;
+    }
+    digits = t.replace(/\D/g, '');
+    if (digits.indexOf('011') === 0) digits = digits.slice(3);
+    else if (digits.indexOf('00') === 0) digits = digits.slice(2);
+    if (digits.length === 10) {
+      if (digits.charAt(0) === '0' || digits.charAt(0) === '1') return null;
+      return '+1' + digits;
+    }
+    if (digits.length === 11 && digits.charAt(0) === '1' &&
+        '23456789'.indexOf(digits.charAt(1)) !== -1) {
+      return '+' + digits;
+    }
+    cand = '+' + digits;
+    return /^\+[1-9][0-9]{7,14}$/.test(cand) ? cand : null;
+  }
+
+  // A dinner whose plan_date is in the past but whose state was never
+  // flipped to done is over — same terminal treatment as done.
+  function isPast(iso) {
+    return !!iso && new Date(iso).getTime() < Date.now();
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  // safeUrl: only http(s) URLs may be rendered as links. Anything
+  // else (javascript:, data:, unparseable) returns null.
+  function safeUrl(u) {
+    if (!u) return null;
+    try {
+      var p = new URL(String(u), location.origin);
+      if (p.protocol === "http:" || p.protocol === "https:") return u;
+    } catch (e) { /* unparseable — not a link */ }
+    return null;
+  }
+
+  $("btnRetry").addEventListener("click", function () { location.reload(); });
+  // Reply listeners are registered ONCE at startup, not in render():
+  // render() runs again on every poll / refetch, and re-registering
+  // there would stack a second doReply onto every tap (double RSVP).
+  $("btnIn").addEventListener("click", function () { doReply("in"); });
+  $("btnOut").addEventListener("click", function () { doReply("out"); });
+  var token = getToken();
+  if (!token) { hide("loading"); show("invalid"); return; }
+
+  var planData = null, myPhone = null;
+
+  function parsePlan(json) {
+    var plan = json && json.plan;
+    if (!plan || !plan.id) return null;
+    return {
+      planId: plan.id,
+      state: plan.state || "sent",
+      planDate: plan.plan_date || json.plan_date || null,
+      timezone: json.timezone || null,
+      partySize: plan.party_size,
+      host: plan.name_on_reservation || "Your host",
+      venue: json.venue || null,
+      counts: {
+        in: (json.rsvp_counts && json.rsvp_counts.in) || 0,
+        out: (json.rsvp_counts && json.rsvp_counts.out) || 0,
+        noReply: (json.rsvp_counts && json.rsvp_counts.no_reply) || 0
+      },
+      deadlineNote: json.reply_deadline_note || ""
+    };
+  }
+
+  rpc("guest_get_plan", { p_token: token }).then(function (json) {
+    var parsed = parsePlan(json);
+    if (!parsed) throw new Error("unknown guest token");
+    planData = parsed;
+    render();
+  }).catch(function (e) {
+    hide("loading");
+    // DISTINGUISH unknown token from transport failure: the old code
+    // showed "link isn't valid" for a transient network blip, with no
+    // retry — a guest would ask the host to resend a good link.
+    if (e && e.message === "unknown guest token") {
+      show("invalid");
+    } else {
+      show("neterror");
+    }
+  });
+
+  function render() {
+    hide("loading"); show("page");
+    var d = planData, v = d.venue || {};
+    $("title").textContent = d.host + " started a Standing with you";
+    $("when").textContent = fmtDayTime(d.planDate, d.timezone);
+
+    if (v.name) {
+      $("venueName").textContent = v.name;
+      var meta = [];
+      if (v.rating != null) meta.push("★ " + v.rating);
+      if (v.neighborhood) meta.push(v.neighborhood);
+      if (v.cuisine) meta.push(v.cuisine);
+      $("venueMeta").textContent = meta.join(" · ");
+      var priceHint = { "$": "casual", "$$": "mid-range", "$$$": "upscale", "$$$$": "splurge" };
+      $("venuePrice").textContent = (v.price_tier || "$$") + " · " + (priceHint[v.price_tier] || "mid-range");
+      var links = "";
+      // SCHEME CHECK: esc() stops attribute breakout, but a
+      // javascript: URL in a venue row would still execute on click.
+      // Only http(s) links are rendered. Venue URLs come from
+      // seeded/admin data, so this is defense-in-depth.
+      var menuUrl = safeUrl(v.menu_url);
+      if (menuUrl) links += '<a href="' + esc(menuUrl) + '" target="_blank" rel="noopener">Menu ↗</a>';
+      var mapUrl = safeUrl(v.maps_url) || (v.address
+        ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(v.address) : null);
+      if (mapUrl) links += '<a href="' + esc(mapUrl) + '" target="_blank" rel="noopener">Map ↗</a>';
+      $("venueLinks").innerHTML = links;
+      if (!links) hide("venueLinks");
+    } else {
+      hide("venueCard");
+    }
+
+    var c = d.counts;
+    var parts = [];
+    if (c.in) parts.push(c.in + " in");
+    if (c.out) parts.push(c.out + " out");
+    if (c.noReply) parts.push(c.noReply + " haven't replied");
+    $("countsLine").textContent = parts.length ? parts.join(" · ") : "Be the first to reply";
+    $("partySize").textContent = "Booking size: table for " + (d.partySize || "—");
+    if (d.deadlineNote) $("deadline").textContent = d.deadlineNote;
+
+    // TERMINAL STATES: cancelled/done hide the form and stop polling.
+    // PAST-DATE IS DISPLAY-ONLY: isPast uses the DEVICE clock — a
+    // guest whose clock runs ahead would see a future dinner as
+    // "already happened" with no recourse. The server (now()) is the
+    // enforcement point: the form stays usable, and a genuinely-past
+    // dinner is rejected by the RSVP call, which maps "already
+    // happened" to this same terminal UI (see doRsvp). Show the note
+    // but keep the form + polling alive.
+    if (d.state === "cancelled" || d.state === "done") {
+      $("planOverText").textContent = d.state === "cancelled"
+        ? "This dinner was cancelled. No need to reply."
+        : "This dinner already happened. No need to reply.";
+      show("planOver");
+      hide("replyBox");
+      stopPoll();
+    } else {
+      if (isPast(d.planDate)) {
+        $("planOverText").textContent = "This dinner looks like it already happened. If that's wrong, check your device clock — your reply will still go through and the server decides.";
+        show("planOver");
+      }
+      startPoll();
+    }
+  }
+
+  // ALREADY-RSVP'D: the guest_state RPC exists but nothing called it,
+  // so a guest re-opening their link saw a blank form instead of their
+  // existing reply. After a valid phone is typed, show the current
+  // RSVP (the form stays usable to change it). Stale responses are
+  // ignored via rsvpSeq; errors hide the line — never a false claim.
+  var rsvpSeq = 0;
+  var rsvpTimer = null;
+  function checkExistingRsvp() {
+    var phone = validPhone($("phone").value);
+    if (!phone) { hide("existingRsvp"); return; }
+    var seq = ++rsvpSeq;
+    rpc("guest_state", { p_token: token, p_phone: phone }).then(function (res) {
+      if (seq !== rsvpSeq) return;
+      var status = res && res.rsvp_status;
+      if (status === "in") {
+        $("existingRsvp").textContent = "You're already in for this dinner — reply again below to change it.";
+        show("existingRsvp");
+      } else if (status === "out") {
+        $("existingRsvp").textContent = "You replied out for this dinner — reply again below to change it.";
+        show("existingRsvp");
+      } else {
+        hide("existingRsvp");
+      }
+      // Pre-select a saved follow-up (only meaningful when the
+      // afterOut view is visible; harmless otherwise). The server
+      // now returns follow_up only for OUT rows (migration 0042),
+      // so a stale 'weekday' from an old OUT can no longer leak
+      // into an IN row's display.
+      var fu = res && res.follow_up;
+      if (fu === "once" || fu === "weekday") {
+        $("chipOnce").classList.toggle("selected", fu === "once");
+        $("chipWeekday").classList.toggle("selected", fu === "weekday");
+      }
+    }).catch(function () { hide("existingRsvp"); });
+  }
+  $("phone").addEventListener("input", function () {
+    hide("phoneError");
+    if (rsvpTimer) clearTimeout(rsvpTimer);
+    rsvpTimer = setTimeout(checkExistingRsvp, 500);
+  });
+
+  // POLL: the page loaded the plan once, so a host cancel/move or a
+  // new RSVP never showed until reload. Re-read every 30s while the
+  // page is open and visible; stop at a terminal state or on unload.
+  // render() never touches the phone input, so a poll can't clobber
+  // a half-typed number; ticks are read-only and last-write-wins
+  // with the same fresh data the reply path uses.
+  var pollTimer = null;
+  function pollTick() {
+    if (document.hidden || !planData) return;
+    rpc("guest_get_plan", { p_token: token }).then(function (json) {
+      var fresh = parsePlan(json);
+      if (!fresh) return;
+      // FULL-PLAN comparison: the old field-by-field check missed host
+      // edits to party size, host name, deadline note, venue
+      // name/price — the display went stale until reload.
+      if (JSON.stringify(fresh) === JSON.stringify(planData)) return;
+      planData = fresh;
+      // Re-check the existing RSVP: a reply made from another
+      // tab/device must surface the "You're already in" line.
+      checkExistingRsvp();
+      if (fresh.state === "cancelled" || fresh.state === "done") {
+        // A post-reply cancel must not leave "You're in ✓" on screen
+        // next to the cancelled notice.
+        hide("afterIn");
+        hide("afterOut");
+        stopPoll();
+      }
+      render();
+    }).catch(function () { /* transient — next tick retries */ });
+  }
+  function startPoll() {
+    if (pollTimer) return;
+    pollTimer = setInterval(pollTick, 30000);
+  }
+  function stopPoll() {
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  }
+  window.addEventListener("pagehide", stopPoll);
+
+  function resetButtons() {
+    $("btnIn").disabled = false; $("btnOut").disabled = false;
+    $("btnIn").textContent = "I'm in";
+  }
+
+  function doReply(reply) {
+    var phone = validPhone($("phone").value);
+    if (!phone) {
+      $("phoneError").textContent = "Enter your number, e.g. +15551234567 or 555-123-4567.";
+      show("phoneError");
       return;
     }
-    try {
-      const { data, error } = await withTimeout(supabase.rpc('guest_get_plan', { p_token: token }));
-      if (error || !data) throw new Error('not found');
-      
-      // RPC returns { plan: {...}, venue: {...}, rsvp_counts: {...}, plan_date, reply_deadline_note }
-      const plan = data.plan || {};
-      const venue = data.venue || {};
-      
-      const hostName = plan.name_on_reservation || 'Someone';
-      document.getElementById('headline').textContent = 
-        `${hostName} invited you to dinner`;
-      document.getElementById('inviter').textContent = 
-        `${hostName} started a Standing with you — dinner on repeat, no planning needed.`;
-      document.getElementById('venue').textContent = venue.name || 'TBD';
-      
-      const planDate = plan.plan_date || data.plan_date;
-      let whenText = '';
-      if (planDate) {
-        const d = new Date(planDate);
-        whenText = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        whenText += ' · ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    hide("phoneError");
+    $("btnIn").disabled = true; $("btnOut").disabled = true;
+    $("btnIn").textContent = "…";
+    // FRESH-STATE CHECK: the page loads the plan once, so a host
+    // cancel/move after load left the guest replying to a dead/stale
+    // dinner. Re-read the plan at the decision point and refuse to
+    // RSVP to a cancelled/done or changed dinner (mirrors the app's
+    // guest page). A failed refetch is transient — proceed; the
+    // server is the enforcement point for cancelled/done.
+    rpc("guest_get_plan", { p_token: token }).then(function (json) {
+      var fresh = parsePlan(json);
+      if (fresh) {
+        // No isPast block: past-ness is the server's call (device
+        // clock may run ahead). Cancelled/done still block here; a
+        // genuinely-past dinner is rejected by guest_rsvp and mapped
+        // to the terminal UI in doRsvp.
+        if (fresh.state === "cancelled" || fresh.state === "done") {
+          planData = fresh;
+          render();
+          resetButtons();
+          return;
+        }
+        var freshVenueId = fresh.venue && fresh.venue.id;
+        var oldVenueId = planData.venue && planData.venue.id;
+        if (fresh.planDate !== planData.planDate || freshVenueId !== oldVenueId) {
+          planData = fresh;
+          render();
+          $("phoneError").textContent = "The host changed this dinner — check the new details above and reply again.";
+          show("phoneError");
+          resetButtons();
+          return;
+        }
+        planData = fresh;
       }
-      document.getElementById('when').textContent = whenText;
-      
-      const partySize = plan.party_size ? `${plan.party_size} people` : '';
-      const neighborhood = venue.neighborhood || '';
-      document.getElementById('who').textContent = 
-        [partySize, neighborhood].filter(Boolean).join(' · ');
-      
-      show('invite');
-    } catch (e) {
-      show('error');
+      doRsvp(reply, phone);
+    }).catch(function () {
+      doRsvp(reply, phone);
+    });
+  }
+
+  function doRsvp(reply, phone) {
+    rpc("guest_rsvp", { p_token: token, p_phone: phone, p_reply: reply }).then(function (res) {
+      myPhone = phone;
+      hide("replyBox");
+      // The server accepted the reply, so the dinner is live — clear
+      // any "looks like it already happened" note shown for a
+      // possibly-wrong device clock (see render()).
+      hide("planOver");
+      if (reply === "in") {
+        var held = res && res.held_now === true;
+        $("youreIn").textContent = "You're in ✓" + (held ? " — the table is now held. We book it for you." : "");
+        show("afterIn");
+        $("btnCal").addEventListener("click", addToCalendar);
+        $("btnAllergies").addEventListener("click", saveAllergies);
+      } else {
+        // Weekday chip label uses this dinner's actual weekday, in
+        // the Standing's zone (viewer-local getDay() can be off by
+        // one across zones).
+        var wd = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        if (planData.planDate) {
+          var dayName;
+          try {
+            dayName = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: planData.timezone || undefined }).format(new Date(planData.planDate));
+          } catch (e) {
+            dayName = wd[new Date(planData.planDate).getDay()];
+          }
+          $("chipWeekday").textContent = dayName + "s are usually bad";
+        }
+        show("afterOut");
+        // Pre-select a follow-up saved on a previous OUT (same page
+        // load re-checks guest_state, which returns follow_up).
+        checkExistingRsvp();
+      }
+      // REFETCH: the old code never reloaded counts after replying,
+      // so "Who's in" stayed stale until the page was reloaded.
+      rpc("guest_get_plan", { p_token: token }).then(function (json) {
+        var c = (json && json.rsvp_counts) || {};
+        var parts = [];
+        if (c.in) parts.push(c.in + " in");
+        if (c.out) parts.push(c.out + " out");
+        if (c.no_reply) parts.push(c.no_reply + " haven't replied");
+        if (parts.length) $("countsLine").textContent = parts.join(" · ");
+      }).catch(function () { /* counts stay as they were; the reply saved */ });
+    }).catch(function (e) {
+      $("btnIn").disabled = false; $("btnOut").disabled = false;
+      $("btnIn").textContent = "I'm in";
+      var msg = (e && e.message) || "";
+      // ERROR MAPPING (same as the app guest page): a server rejection
+      // must name the real cause — "try again" is wrong for a dead
+      // dinner, an uninvited number, or a bad link.
+      if (/was cancelled/.test(msg)) {
+        hide("replyBox");
+        $("planOverText").textContent = "This dinner was cancelled. No need to reply.";
+        show("planOver");
+        return;
+      }
+      if (/already happened/.test(msg)) {
+        hide("replyBox");
+        $("planOverText").textContent = "This dinner already happened. No need to reply.";
+        show("planOver");
+        return;
+      }
+      if (/wasn.t invited|not invited/.test(msg)) {
+        $("phoneError").textContent = "That number wasn't invited to this dinner — check the number and try again.";
+        show("phoneError");
+        return;
+      }
+      if (/host is changing/.test(msg)) {
+        $("phoneError").textContent = "The host is changing this dinner — try again in a moment.";
+        show("phoneError");
+        return;
+      }
+      if (/unknown guest token/.test(msg)) {
+        hide("replyBox");
+        $("planOverText").textContent = "This invite link isn't valid. Ask your host to send you a fresh one.";
+        show("planOver");
+        // Stop polling a dead token — the old code kept hitting
+        // guest_get_plan every 30s forever against a token that
+        // will never resolve.
+        stopPoll();
+        return;
+      }
+      $("phoneError").textContent = "Something went wrong — check your connection and try again. (" + msg + ")";
+      show("phoneError");
+    });
+  }
+
+  // Re-enable Save after an edit: a failed save left the button
+  // disabled with "Couldn't save — tap to retry" and a later edit
+  // never re-enabled it, so the corrected note could not be saved.
+  // ALWAYS reset the label: the old code kept "Saved ✓" while
+  // unsaved edits were pending — the button lied about the state.
+  $("allergies").addEventListener("input", function () {
+    $("btnAllergies").disabled = false;
+    $("btnAllergies").textContent = "Save note";
+  });
+
+  function saveAllergies() {
+    var note = $("allergies").value.trim();
+    if (!note || !myPhone) return;
+    $("btnAllergies").disabled = true;
+    rpc("guest_set_profile", { p_token: token, p_phone: myPhone, p_allergies_note: note })
+      .then(function () { $("btnAllergies").textContent = "Saved ✓"; })
+      .catch(function () {
+        $("btnAllergies").disabled = false;
+        $("btnAllergies").textContent = "Couldn't save — tap to retry";
+      });
+  }
+
+  // OUT FOLLOW-UP: "just this time" vs "that weekday is usually bad"
+  // (guest_set_follow_up, migration 0025) — the standalone page had
+  // no follow-up UI at all, so guests on the published link could
+  // never record it. Same honest copy as the app: no promise that
+  // future picks dodge the weekday (no picker reads follow_up yet).
+  function saveFollowUp(value) {
+    if (!myPhone) return;
+    hide("followUpError");
+    $("chipOnce").disabled = true; $("chipWeekday").disabled = true;
+    rpc("guest_set_follow_up", { p_token: token, p_phone: myPhone, p_follow_up: value })
+      .then(function () {
+        $("chipOnce").classList.toggle("selected", value === "once");
+        $("chipWeekday").classList.toggle("selected", value === "weekday");
+        $("followUpNote").textContent = value === "once"
+          ? "Noted — just this once. Your spot in the group doesn't change."
+          : "Noted — thanks for letting us know.";
+        show("followUpNote");
+        $("chipOnce").disabled = false; $("chipWeekday").disabled = false;
+      })
+      .catch(function () {
+        $("followUpError").textContent = "Could not save that — try again.";
+        show("followUpError");
+        $("chipOnce").disabled = false; $("chipWeekday").disabled = false;
+      });
+  }
+  $("chipOnce").addEventListener("click", function () { saveFollowUp("once"); });
+  $("chipWeekday").addEventListener("click", function () { saveFollowUp("weekday"); });
+
+  function addToCalendar() {
+    var d = planData, v = d.venue || {};
+    // UTC with Z suffix (RFC 5545): the old code wrote floating local
+    // time, so a dinner built in one zone rendered at the wrong wall
+    // time in another's calendar. Matches the app's lib/ics.ts.
+    function icsDate(dt) {
+      var p = function (n) { return (n < 10 ? "0" : "") + n; };
+      return dt.getUTCFullYear() + p(dt.getUTCMonth() + 1) + p(dt.getUTCDate()) + "T" +
+             p(dt.getUTCHours()) + p(dt.getUTCMinutes()) + "00Z";
     }
+    var start = d.planDate ? new Date(d.planDate) : new Date();
+    var end = new Date(start.getTime() + 2 * 3600 * 1000);
+    var ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//STANDING//guest//EN","BEGIN:VEVENT",
+      "UID:" + token + "@standing.app",
+      "DTSTAMP:" + icsDate(new Date()),
+      "DTSTART:" + icsDate(start),
+      "DTEND:" + icsDate(end),
+      "SUMMARY:Standing dinner" + (v.name ? " at " + v.name : ""),
+      "LOCATION:" + (v.address || v.name || ""),
+      "END:VEVENT","END:VCALENDAR"].join("\r\n");
+    var blob = new Blob([ics], { type: "text/calendar" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "standing-dinner.ics";
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
-  
-  function show(id) {
-    ['loading', 'invite', 'done', 'error'].forEach(el => 
-      document.getElementById(el).classList.add('hidden')
-    );
-    document.getElementById(id).classList.remove('hidden');
-  }
-  
-  function normalizePhone(input) {
-    // Strip all non-digits, then ensure E.164 format
-    let digits = input.replace(/\D/g, '');
-    if (digits.length === 10) {
-      // US number without country code
-      return '+1' + digits;
-    } else if (digits.length === 11 && digits[0] === '1') {
-      // US number with country code
-      return '+' + digits;
-    } else if (input.trim().startsWith('+')) {
-      // Already has +, just clean it
-      return '+' + digits;
-    }
-    // Invalid - return as-is to trigger validation error
-    return input.trim();
-  }
-  
-  function getPhone() {
-    const raw = document.getElementById('phone').value;
-    const phone = normalizePhone(raw);
-    // E.164: + followed by 7-15 digits
-    if (!/^\+\d{7,15}$/.test(phone)) {
-      document.getElementById('phoneError').textContent = 'Enter a valid phone number';
-      document.getElementById('phoneError').classList.remove('hidden');
-      return null;
-    }
-    document.getElementById('phoneError').classList.add('hidden');
-    return phone;
-  }
-  
-  async function rsvp(reply) {
-    const phone = getPhone();
-    if (!phone) return;
-    
-    document.getElementById('btnIn').disabled = true;
-    document.getElementById('btnOut').disabled = true;
-    
-    try {
-      const { error } = await withTimeout(supabase.rpc('guest_rsvp', {
-        p_token: token,
-        p_phone: phone,
-        p_reply: reply,
-      }));
-      if (error) throw error;
-      
-      document.getElementById('doneTitle').textContent = 
-        reply === 'in' ? "You're in! 🎉" : "No worries";
-      document.getElementById('doneSub').textContent = 
-        reply === 'in' 
-          ? "We'll text you the details and a reminder the day before."
-          : "Thanks for letting us know. Maybe next time!";
-      show('done');
-    } catch (e) {
-      document.getElementById('phoneError').textContent = 'Something went wrong. Try again.';
-      document.getElementById('phoneError').classList.remove('hidden');
-      document.getElementById('btnIn').disabled = false;
-      document.getElementById('btnOut').disabled = false;
-    }
-  }
-  
-  document.getElementById('btnIn').onclick = () => rsvp('in');
-  document.getElementById('btnOut').onclick = () => rsvp('out');
-  
-  init();
+})();
 </script>
 </body>
 </html>
