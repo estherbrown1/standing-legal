@@ -674,7 +674,7 @@
       "DTSTART:" + icsDate(start),
       "DTEND:" + icsDate(end),
       "SUMMARY:Standing dinner" + (v.name ? " at " + v.name : ""),
-      "LOCATION:" + (v.address || v.name || ""),
+      "LOCATION:" + (v.address || (v.name ? v.name + (v.neighborhood ? ", " + v.neighborhood : "") : "")),
       "END:VEVENT","END:VCALENDAR"].join("\r\n");
     var blob = new Blob([ics], { type: "text/calendar" });
     var a = document.createElement("a");
